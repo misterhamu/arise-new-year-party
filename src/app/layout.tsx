@@ -45,7 +45,7 @@ export default function RootLayout({
             <main className="h-screen flex justify-center items-center">
               {children}
             </main>
-            <footer className="w-full flex items-center justify-center py-3">
+            <footer className="w-full flex items-center justify-center py-12">
               <span className="text-default-600">2023 © Powered by Arise by Infinitas</span>
             </footer>
           </div>

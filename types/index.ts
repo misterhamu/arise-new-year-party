@@ -21,3 +21,7 @@ export type JWTGoogleResponse = {
   exp: number;
   jti: string;
 };
+
+export type FormSubmit = {
+  employeeId: string
+}
