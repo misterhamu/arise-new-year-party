@@ -35,21 +35,21 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-screen bg font-sans antialiased",
           fontSans.variable
         )}
       >
-<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-					<div className="relative flex flex-col h-screen">
-						<Navbar />
-						<main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-							{children}
-						</main>
-						<footer className="w-full flex items-center justify-center py-3">
-						<span className="text-default-600">this is footer</span>
-						</footer>
-					</div>
-				</Providers>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+          <div className="relative flex flex-col h-screen">
+            <Navbar />
+            <main className="h-screen flex justify-center items-center">
+              {children}
+            </main>
+            <footer className="w-full flex items-center justify-center py-3">
+              <span className="text-default-600">2023 © Powered by Arise by Infinitas</span>
+            </footer>
+          </div>
+        </Providers>
       </body>
     </html>
   );
