@@ -1,39 +1,18 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "NextUI Template",
-  description:
-    "Create stunning websites, no matter your level of design expertise.",
+  name: "Arise New Year Party 2023",
+  description: "",
   navItems: [
     {
       label: "Home",
       href: "/",
     },
-    {
-      label: "Blog",
-      href: "/blog",
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
   ],
   navMenuItems: [
     {
-        label: "Home",
-        href: "/",
-      },
-      {
-        label: "Blog",
-        href: "/blog",
-      },
-      {
-        label: "About",
-        href: "/about",
-      },
+      label: "Home",
+      href: "/",
+    },
   ],
-  links: {
-    github: "https://github.com/misterhamu",
-    website: "https://aristreet.com",
-  },
 };

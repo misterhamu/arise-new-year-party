@@ -25,6 +25,7 @@ export default function Home() {
   const [userInfo, setUserInfo] = useState<JWTGoogleResponse | null>();
   const [employee, setEmployee] = useState<string>("");
   const employeeIdRef = useRef<HTMLInputElement | null>(null);
+  const [loading, setLoading] = useState(false);
   const domain = ["arise.tech", "infinitaskt.com"];
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const schema = yup
@@ -70,7 +71,11 @@ export default function Home() {
 
   const onSubmit = (data: any) => {
     console.log(data);
-    onOpen();
+    setLoading(!loading);
+    setTimeout(() => {
+      setLoading(false);
+      onOpen();
+    }, 3000);
   };
 
   const onTriggerValidation = (event: any) => {
@@ -141,17 +146,18 @@ export default function Home() {
               )}
             />
 
-            <button
-              className="relative  text-white bg-gradient-to-br
-          from-pink-500 to-orange-400 hover:bg-gradient-to-bl
-          font-small rounded-lg text-xl px-10 py-2 text-center mb-2 min-w-[160px] h-[64px]
-          disabled:opacity-25 font-bold
-          "
-              disabled={!isValid}
+            <Button
+            className="relative  text-white bg-gradient-to-br
+            from-pink-500 to-orange-400 hover:bg-gradient-to-bl
+            font-small rounded-lg text-xl px-10 py-2 text-center mb-2 min-w-[160px] h-[64px] font-semibold"
               type="submit"
+              color="primary"
+              isLoading={loading}
+              // onClick={handleClick}
+              isDisabled={!isValid}
             >
-              Check In
-            </button>
+                 Check In
+            </Button>
           </form>
         ) : (
           <div className="w-full flex flex-col gap-6 text-center">
@@ -197,8 +203,8 @@ export default function Home() {
       </div>
 
       <Modal
-        onClose={()=>{
-          setValue("employeeId","");
+        onClose={() => {
+          setValue("employeeId", "");
           trigger("employeeId");
           setUserInfo(null);
         }}
@@ -216,19 +222,25 @@ export default function Home() {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-              {/* <h2 className="text-4xl">Congratulation!</h2> */}
+                {/* <h2 className="text-4xl">Congratulation!</h2> */}
               </ModalHeader>
               <ModalBody>
-                <p className="text-2xl">
-                <span className="font-semibold text-green-700">Checked In for the New Year party!</span> Eager to celebrate and hopeful to win exciting lucky draw prizes!
+                <p className="text-2xl text-center">
+                  <span className="font-semibold text-green-700">
+                    Checked In for the New Year party!
+                  </span>{" "}
+                  Eager to celebrate and hopeful to win exciting lucky draw
+                  prizes!
                 </p>
               </ModalBody>
               <ModalFooter>
-
-                <Button color="primary" onPress={onClose}
-                className="bg-gradient-to-br
+                <Button
+                  color="primary"
+                  onPress={onClose}
+                  className="bg-gradient-to-br
                 from-pink-500 to-orange-400 hover:bg-gradient-to-bl text-lg
-                font-small">
+                font-small"
+                >
                   Enjoy :)
                 </Button>
               </ModalFooter>
