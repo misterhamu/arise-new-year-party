@@ -4,7 +4,7 @@ import { FormSubmit, JWTGoogleResponse } from "@/types/index";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
@@ -20,6 +20,9 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
+import { useMutation } from "@tanstack/react-query";
+import { CheckInReqest, GetEmployeeByEmailRequest, checkIn, getEmployeeId } from "./lib/api";
+import { AxiosError } from "axios";
 
 export default function Home() {
   const [userInfo, setUserInfo] = useState<JWTGoogleResponse | null>();
@@ -51,37 +54,61 @@ export default function Home() {
     resolver: yupResolver(schema),
     mode: "onChange",
     reValidateMode: "onChange",
-    // defaultValues: {
-    //   employeeId: "",
-    // },
   });
 
-  useEffect(() => {
-    if (userInfo) {
-      employeeIdRef.current?.focus();
-    }
-  }, [userInfo]);
-
-  const handleInputChange = (e: any) => {
-    // Use regular expression to allow only numeric input
-    let input = e.target.value.replace(/[^0-9]/g, "");
-    input = input.slice(0, 6);
-    setEmployee(input);
-  };
-
   const onSubmit = (data: any) => {
-    console.log(data);
     setLoading(!loading);
-    setTimeout(() => {
-      setLoading(false);
-      onOpen();
-    }, 3000);
+    checkInParty.mutate(data.employeeId);
   };
 
-  const onTriggerValidation = (event: any) => {
-    const { name } = event.target;
-    trigger(name);
-  };
+  const getEmployeeIdByEmail = useMutation({
+    mutationFn: async (email: string) => {
+      try {
+        const req: GetEmployeeByEmailRequest = {
+          email: email,
+        };
+
+        return getEmployeeId(req);
+      } catch (err) {}
+    },
+    onSuccess: async (data, variables, context) => {
+      if (data?.data) {
+        setValue("employeeId", data.data.data.employeeId);
+        trigger("employeeId");
+      }
+    },
+  });
+
+  const checkInParty = useMutation({
+    mutationFn: async (employeeId: string) => {
+      try {
+        const req: CheckInReqest = {
+          employeeId: employeeId,
+        };
+
+        return checkIn(req);
+      } catch (err) {
+        toast.error("error")
+          throw err
+      }
+    },
+    onSuccess: async (data, variables, context) => {
+      if (data?.data) {
+        setLoading(false)
+        onOpen();
+      }
+    },
+    onError: async (error: AxiosError) => {
+      console.log(error)
+      if(error){
+        setLoading(false)
+        setUserInfo(null)
+        // @ts-ignore
+        toast.error(error.response?.data.message)
+      }
+    },
+  });
+
   return (
     <>
       <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-12 px-6">
@@ -96,7 +123,7 @@ export default function Home() {
             <Input
               type="email"
               label="Email"
-              disabled
+              isDisabled
               size="lg"
               value={userInfo?.email}
               className="input"
@@ -104,7 +131,7 @@ export default function Home() {
             <Input
               type="text"
               label="First Name"
-              disabled
+              isDisabled
               size="lg"
               value={userInfo?.given_name}
               className="input"
@@ -112,7 +139,7 @@ export default function Home() {
             <Input
               type="text"
               label="Last Name"
-              disabled
+              isDisabled
               size="lg"
               value={userInfo?.family_name}
               className="input"
@@ -123,40 +150,29 @@ export default function Home() {
               name="employeeId"
               render={({ field }) => (
                 <Input
-                  // {...register("employeeId")}
                   {...field}
                   ref={employeeIdRef}
                   type="tel"
                   maxLength={6}
                   label="Empolyee Id"
-                  isClearable
                   size="lg"
                   className="input"
-                  // onChange={onChange}
-                  // onChange={handleInputChange}
-
-                  // value={String(employee)}
                   autoComplete="off"
-                  onClear={() => {
-                    setEmployee("");
-                    setValue("employeeId", "");
-                    trigger("employeeId");
-                  }}
+                  isDisabled
                 />
               )}
             />
 
             <Button
-            className="relative  text-white bg-gradient-to-br
+              className="relative  text-white bg-gradient-to-br
             from-pink-500 to-orange-400 hover:bg-gradient-to-bl
             font-small rounded-lg text-xl px-10 py-2 text-center mb-2 min-w-[160px] h-[64px] font-semibold"
               type="submit"
               color="primary"
               isLoading={loading}
-              // onClick={handleClick}
               isDisabled={!isValid}
             >
-                 Check In
+              Check In
             </Button>
           </form>
         ) : (
@@ -183,9 +199,11 @@ export default function Home() {
                     );
                     const checkDomain = data.email.split("@");
                     if (domain.includes(checkDomain[1])) {
-                      setUserInfo(
-                        jwtDecode(String(credentialResponse.credential))
+                      const userInfo: JWTGoogleResponse = jwtDecode(
+                        String(credentialResponse.credential)
                       );
+                      setUserInfo(userInfo);
+                      getEmployeeIdByEmail.mutate(userInfo.email);
                     } else {
                       toast.error(
                         "Please sign in with an email from @arise.tech or @infinitaskt.com domains."
