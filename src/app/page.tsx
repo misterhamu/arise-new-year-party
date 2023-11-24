@@ -21,12 +21,17 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
-import { CheckInReqest, GetEmployeeByEmailRequest, checkIn, getEmployeeId } from "./lib/api";
+import {
+  CheckInReqest,
+  GetEmployeeByEmailRequest,
+  checkIn,
+  getEmployeeId,
+} from "./lib/api";
 import { AxiosError } from "axios";
 
 export default function Home() {
   const [userInfo, setUserInfo] = useState<JWTGoogleResponse | null>();
-  const [employee, setEmployee] = useState<string>("");
+  const [employee, setEmployee] = useState<boolean>(false);
   const employeeIdRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
   const domain = ["arise.tech", "infinitaskt.com"];
@@ -69,14 +74,24 @@ export default function Home() {
         };
 
         return getEmployeeId(req);
-      } catch (err) {}
+      } catch (err:any) {
+          console.log(err.response.data.code)
+      }
     },
     onSuccess: async (data, variables, context) => {
       if (data?.data) {
+        console.log(data)
         setValue("employeeId", data.data.data.employeeId);
         trigger("employeeId");
+        setEmployee(true);
       }
     },
+    onError: async(err: any) =>{
+      if(err.response.status === 404){
+        setValue("employeeId", "");
+        employeeIdRef.current?.focus();
+      }
+    }
   });
 
   const checkInParty = useMutation({
@@ -88,23 +103,28 @@ export default function Home() {
 
         return checkIn(req);
       } catch (err) {
-        toast.error("error")
-          throw err
+        toast.dismiss();
+        toast.error("error");
+        throw err;
       }
+    },
+    onMutate: () => {
+      toast.dismiss();
     },
     onSuccess: async (data, variables, context) => {
       if (data?.data) {
-        setLoading(false)
+        setLoading(false);
         onOpen();
       }
     },
     onError: async (error: AxiosError) => {
-      console.log(error)
-      if(error){
-        setLoading(false)
-        setUserInfo(null)
+      console.log(error);
+      if (error) {
+        toast.dismiss();
+        setLoading(false);
+        setUserInfo(null);
         // @ts-ignore
-        toast.error(error.response?.data.message)
+        toast.error(error.response?.data.message);
       }
     },
   });
@@ -117,7 +137,7 @@ export default function Home() {
             onSubmit={handleSubmit(onSubmit)}
             className="w-full flex flex-col gap-6 text-center"
           >
-            <h1 className="text-6xl mb-6 italic font-bold">
+            <h1 className="text-4xl mb-6 italic font-bold">
               Arise New Year Party 2023
             </h1>
             <Input
@@ -154,11 +174,11 @@ export default function Home() {
                   ref={employeeIdRef}
                   type="tel"
                   maxLength={6}
-                  label="Empolyee Id"
+                  label="employee Id"
                   size="lg"
                   className="input"
                   autoComplete="off"
-                  isDisabled
+                  isDisabled={employee}
                 />
               )}
             />
@@ -166,7 +186,7 @@ export default function Home() {
             <Button
               className="relative  text-white bg-gradient-to-br
             from-pink-500 to-orange-400 hover:bg-gradient-to-bl
-            font-small rounded-lg text-xl px-10 py-2 text-center mb-2 min-w-[160px] h-[64px] font-semibold"
+            font-small rounded-lg text-xl px-10 py-2 text-center mb-2 min-w-[160px] h-[64px] font-semibold disabled:opacity-30"
               type="submit"
               color="primary"
               isLoading={loading}
@@ -178,7 +198,7 @@ export default function Home() {
         ) : (
           <div className="w-full flex flex-col gap-6 text-center">
             <div>
-              <h1 className="text-6xl  italic font-bold tex">
+              <h1 className="text-4xl  italic font-bold tex">
                 Arise New Year Party 2023
               </h1>
               <h4 className="mt-6 text-lg">
@@ -193,6 +213,7 @@ export default function Home() {
                 width={250}
                 size={"medium"}
                 onSuccess={async (credentialResponse) => {
+                  toast.dismiss();
                   if (await credentialResponse.credential) {
                     const data: JWTGoogleResponse = jwtDecode(
                       String(credentialResponse.credential)
@@ -205,6 +226,7 @@ export default function Home() {
                       setUserInfo(userInfo);
                       getEmployeeIdByEmail.mutate(userInfo.email);
                     } else {
+                      toast.dismiss();
                       toast.error(
                         "Please sign in with an email from @arise.tech or @infinitaskt.com domains."
                       );
@@ -212,6 +234,7 @@ export default function Home() {
                   }
                 }}
                 onError={() => {
+                  toast.dismiss();
                   console.log("Login Failed");
                 }}
               />
@@ -240,7 +263,6 @@ export default function Home() {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                {/* <h2 className="text-4xl">Congratulation!</h2> */}
               </ModalHeader>
               <ModalBody>
                 <p className="text-2xl text-center">
@@ -259,7 +281,7 @@ export default function Home() {
                 from-pink-500 to-orange-400 hover:bg-gradient-to-bl text-lg
                 font-small"
                 >
-                  Enjoy :)
+                  Good Luck :)
                 </Button>
               </ModalFooter>
             </>

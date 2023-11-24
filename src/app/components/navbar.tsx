@@ -27,10 +27,10 @@ export const Navbar = () => {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink
-            className="flex justify-start items-center gap-1 mt-6"
+            className="flex justify-start items-center gap-1 mt-2"
             href="/"
           >
-            <Image src={logoImage} alt="" width={120} height={60}></Image>
+            <Image src={logoImage} alt="" width={100} height={60}></Image>
           </NextLink>
         </NavbarBrand>
       </NavbarContent>

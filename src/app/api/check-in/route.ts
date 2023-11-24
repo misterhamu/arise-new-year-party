@@ -8,8 +8,9 @@ export const POST = async (req: Request, res: Response) => {
     const response = await prisma.checkin.create({
       data: {
         employee_id: employeeId,
+        eligible: false,
         created_time_date: new Date(),
-        updated_time_date: new Date()
+        updated_time_date: new Date(),
       },
     });
 
