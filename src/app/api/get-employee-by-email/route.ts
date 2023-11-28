@@ -7,32 +7,35 @@ export const POST = async (req: Request, res: Response) => {
   try {
     const response = await prisma.employee.findFirst({
       where: {
-        OR: [
-          {
-            email: email,
-          },
-          {
-            email_inf: email,
-          },
-        ],
+        email: email,
       },
     });
     if (response) {
       return NextResponse.json(
         {
           message: "Success",
-          data: { employeeId: response?.employee_id },
+          data: { employeeId: response.employee_id },
         },
         { status: 200 }
       );
     } else {
-      return NextResponse.json(
-        {
-          message: "Data not found",
-          data: {},
-        },
-        { status: 404 }
-      );
+      if (email.split("@")[1] == "arise.tech") {
+        return NextResponse.json(
+          {
+            message: "Data not found",
+            code: 4001,
+          },
+          { status: 400 }
+        );
+      } else {
+        return NextResponse.json(
+          {
+            message: "Data not found",
+            code: 4002,
+          },
+          { status: 400 }
+        );
+      }
     }
   } catch (error: any) {
     return NextResponse.json(

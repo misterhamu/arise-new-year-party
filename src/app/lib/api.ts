@@ -22,6 +22,7 @@ export const getEmployeeId = async (req: GetEmployeeByEmailRequest) => {
 
 export type CheckInReqest = {
   employeeId: string;
+  email: string;
 };
 
 export const checkIn = async (req: CheckInReqest) => {

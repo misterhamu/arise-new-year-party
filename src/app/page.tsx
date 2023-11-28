@@ -32,10 +32,11 @@ import { useLoading } from "./context/loadingContext";
 
 export default function Home() {
   const [userInfo, setUserInfo] = useState<JWTGoogleResponse | null>();
+  const [emailDomain, setEmailDomain] = useState<string>("");
   const [employee, setEmployee] = useState<boolean>(false);
   const employeeIdRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
-  const domain = ["arise.tech", "infinitaskt.com"];
+  const domain = ["arise.tech", "infinitaskt.com", "@krungthai.com"];
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const Loading = useLoading();
   const schema = yup
@@ -92,9 +93,14 @@ export default function Home() {
       }
     },
     onError: async (err: any) => {
-      if (err.response.status === 404) {
-        setValue("employeeId", "");
-        employeeIdRef.current?.focus();
+      if (err.response.status === 400) {
+        if (err.response.data.code == 4001) {
+          setValue("employeeId", "");
+          employeeIdRef.current?.focus();
+        } else {
+          setUserInfo(null);
+          toast.error("You do not have permission to check in.");
+        }
       }
     },
     onSettled: () => {
@@ -104,9 +110,14 @@ export default function Home() {
 
   const checkInParty = useMutation({
     mutationFn: async (employeeId: string) => {
+      if (!userInfo) {
+        toast.error("user not found");
+        return;
+      }
       try {
         const req: CheckInReqest = {
           employeeId: employeeId,
+          email: userInfo.email,
         };
 
         return checkIn(req);
@@ -210,8 +221,8 @@ export default function Home() {
                 Arise New Year Party 2023
               </h1>
               <h4 className="mt-6 text-lg">
-                Kindly sign in using your credentials from either @arise.tech or
-                @infinitaskt.com.
+                Kindly sign in using your credentials only from @arise.tech,
+                @infinitaskt.com, and @krungthai.com.
               </h4>
             </div>
             <Divider className="my-4" />
@@ -232,11 +243,12 @@ export default function Home() {
                         String(credentialResponse.credential)
                       );
                       setUserInfo(userInfo);
+                      setEmailDomain(checkDomain[1]);
                       getEmployeeIdByEmail.mutate(userInfo.email);
                     } else {
                       toast.dismiss();
                       toast.error(
-                        "Please sign in with an email from @arise.tech or @infinitaskt.com domains."
+                        "Please sign in with an email from @arise.tech, @infinitaskt.com, or @krungthai.com domains."
                       );
                     }
                   }

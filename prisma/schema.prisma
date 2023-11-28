@@ -10,18 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Employee{
   id  Int @id @default(autoincrement())
   employee_id String
   email String
-  email_inf String
 }
 
 model Checkin{
   id  Int @id @default(autoincrement())
   employee_id String @unique
+  email String @unique
   eligible Boolean @default(false)
+  is_claimed Boolean @default(false)
   created_time_date DateTime  @default(now()) @db.Timestamptz(3)
   updated_time_date DateTime  @default(now()) @db.Timestamptz(3)
 }
