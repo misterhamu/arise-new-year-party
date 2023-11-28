@@ -25,3 +25,10 @@ model Checkin{
   created_time_date DateTime  @default(now()) @db.Timestamptz(3)
   updated_time_date DateTime  @default(now()) @db.Timestamptz(3)
 }
+
+model User{
+  id  Int @id @default(autoincrement())
+  email String @unique
+  password String
+  name String
+}

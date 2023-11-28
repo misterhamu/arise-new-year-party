@@ -28,6 +28,7 @@ import {
   getEmployeeId,
 } from "./lib/api";
 import { AxiosError } from "axios";
+import { useLoading } from "./context/loadingContext";
 
 export default function Home() {
   const [userInfo, setUserInfo] = useState<JWTGoogleResponse | null>();
@@ -36,6 +37,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const domain = ["arise.tech", "infinitaskt.com"];
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const Loading = useLoading();
   const schema = yup
     .object({
       employeeId: yup
@@ -74,24 +76,30 @@ export default function Home() {
         };
 
         return getEmployeeId(req);
-      } catch (err:any) {
-          console.log(err.response.data.code)
+      } catch (err: any) {
+        console.log(err.response.data.code);
       }
+    },
+    onMutate: () => {
+      Loading.show();
     },
     onSuccess: async (data, variables, context) => {
       if (data?.data) {
-        console.log(data)
+        console.log(data);
         setValue("employeeId", data.data.data.employeeId);
         trigger("employeeId");
         setEmployee(true);
       }
     },
-    onError: async(err: any) =>{
-      if(err.response.status === 404){
+    onError: async (err: any) => {
+      if (err.response.status === 404) {
         setValue("employeeId", "");
         employeeIdRef.current?.focus();
       }
-    }
+    },
+    onSettled: () => {
+      Loading.hide();
+    },
   });
 
   const checkInParty = useMutation({
@@ -262,8 +270,7 @@ export default function Home() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-              </ModalHeader>
+              <ModalHeader className="flex flex-col gap-1"></ModalHeader>
               <ModalBody>
                 <p className="text-2xl text-center">
                   <span className="font-semibold text-green-700">
