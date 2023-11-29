@@ -168,12 +168,12 @@ export default function Home() {
   
   return (
     <>
-      <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-12 px-6">
+      <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-6 px-6">
         <div className="flex justify-center">
           <Image
             src={"/images/game.png"}
             alt=""
-            width={400}
+            width={300}
             height={200}
           ></Image>
         </div>
@@ -258,11 +258,11 @@ export default function Home() {
         ) : (
           <div className="w-full flex flex-col gap-6 text-center">
             <div className="flex flex-col justify-center items-center">
-              <h1 className="text-4xl  italic font-bold tracking-widest">
+              <h1 className="text-2xl  italic font-bold tracking-widest">
                 Welcome to <br />
                 Staff Engagement Party
               </h1>
-              <h4 className="mt-6 text-2xl  text-yellow-500">
+              <h4 className="mt-6 text-xl  text-yellow-500">
                 Register to get a chance to win the Lucky Draw game!
               </h4>
             </div>

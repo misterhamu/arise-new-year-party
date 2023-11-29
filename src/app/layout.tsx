@@ -42,10 +42,10 @@ export default function RootLayout({
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
             <Navbar />
-            <main className="h-screen flex justify-center items-center">
+            <main className="h-screen flex justify-center items-center mb-6">
               {children}
             </main>
-            <footer className="w-full flex items-center justify-center py-12">
+            <footer className="w-full flex items-center justify-center pt-12">
               <span className="text-default-600">2023 © Powered by Arise by Infinitas</span>
             </footer>
           </div>
