@@ -1,12 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import prisma from "src/app/lib/prisma";
 
 export const POST = async (req: Request, res: Response) => {
-  const  {employeeId , email }  = await req.json();
+  const { employeeId, email } = await req.json();
   const currentTime = new Date();
   const timeZoneOffset = 7 * 60;
-  const adjustedTime = new Date(currentTime.getTime() + timeZoneOffset * 60 * 1000);
+  const adjustedTime = new Date(
+    currentTime.getTime() + timeZoneOffset * 60 * 1000
+  );
 
   try {
     const response = await prisma.checkin.create({
@@ -20,25 +23,34 @@ export const POST = async (req: Request, res: Response) => {
       },
     });
 
-    if(response){
+    if (response) {
       return NextResponse.json(
         {
           message: "Checked in successfully.",
         },
         { status: 201 }
       );
-    } else{
+    }
+  } catch (error) {
+    console.log(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // The .code property can be accessed in a type-safe manner
+      if (error.code === "P2002") {
+        return NextResponse.json(
+          { message: "You have already checked in.", code: 4001 },
+          { status: 400 }
+        );
+      } else {
+        return NextResponse.json(
+          { message: "Failed to check-in please try again.", code: 4002 },
+          { status: 400 }
+        );
+      }
+    } else {
       return NextResponse.json(
-        {
-          message: "Sorry, can't check in",
-          data: {},
-        },
-        { status: 400 }
+        { message: "System error please try again.", code: 5001 },
+        { status: 500 }
       );
     }
-   
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json({ message: "You have already checked in." }, { status: 400 });
   }
 };

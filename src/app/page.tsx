@@ -4,13 +4,15 @@ import { FormSubmit, JWTGoogleResponse } from "@/types/index";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as yup from "yup";
+import Image from "next/image";
 
 import {
   Button,
+  Checkbox,
   Divider,
   Input,
   Modal,
@@ -29,8 +31,10 @@ import {
 } from "./lib/api";
 import { AxiosError } from "axios";
 import { useLoading } from "./context/loadingContext";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [userInfo, setUserInfo] = useState<JWTGoogleResponse | null>();
   const [emailDomain, setEmailDomain] = useState<string>("");
   const [employee, setEmployee] = useState<boolean>(false);
@@ -133,7 +137,9 @@ export default function Home() {
     onSuccess: async (data, variables, context) => {
       if (data?.data) {
         setLoading(false);
-        onOpen();
+        // onOpen();
+        sessionStorage.setItem("checkIn", "true");
+        router.push("/check-in");
       }
     },
     onError: async (error: AxiosError) => {
@@ -143,14 +149,34 @@ export default function Home() {
         setLoading(false);
         setUserInfo(null);
         // @ts-ignore
-        toast.error(error.response?.data.message);
+        if (error.response?.data.code === 4001) {
+          sessionStorage.setItem("checkIn", "true");
+          router.push("/check-in");
+        } else {
+          // @ts-ignore
+          toast.error(error.response?.data.message);
+        }
       }
     },
   });
 
+  useEffect(() => {
+    if (sessionStorage.getItem("checkIn")) {
+      router.replace("/check-in");
+    }
+  }, []);
+  
   return (
     <>
-      <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-12 px-6">
+      <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-3 px-6">
+        <div className="flex justify-center">
+          <Image
+            src={"/images/game.png"}
+            alt=""
+            width={400}
+            height={200}
+          ></Image>
+        </div>
         {userInfo ? (
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -184,49 +210,67 @@ export default function Home() {
               className="input"
             />
 
-            <Controller
-              control={control}
-              name="employeeId"
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  ref={employeeIdRef}
-                  type="tel"
-                  maxLength={6}
-                  label="employee Id"
-                  size="lg"
-                  className="input"
-                  autoComplete="off"
-                  isDisabled={employee}
-                />
-              )}
-            />
+            <div className="flex w-full flex-nowrap gap-4">
+              <Controller
+                control={control}
+                name="employeeId"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    ref={employeeIdRef}
+                    type="tel"
+                    maxLength={6}
+                    label="Employee Id"
+                    size="lg"
+                    className="input"
+                    autoComplete="off"
+                    isDisabled={employee}
+                  />
+                )}
+              />
+              <Input
+                isDisabled
+                type="text"
+                size="lg"
+                label="Size"
+                placeholder=""
+                className="text-4xl size"
+                value={"M"}
+              />
+            </div>
+
+            <Checkbox defaultSelected isDisabled>
+              <p className="font-bold">
+                Check to redeem your t-shirt and wristband to join Arise Connext
+              </p>
+            </Checkbox>
 
             <Button
               className="relative  text-white bg-gradient-to-br
             from-pink-500 to-orange-400 hover:bg-gradient-to-bl
-            font-small rounded-lg text-xl px-10 py-2 text-center mb-2 min-w-[160px] h-[64px] font-semibold disabled:opacity-30"
+             font-bold
+             rounded-lg text-xl px-10 py-2 text-center mb-2 min-w-[160px] h-[64px] disabled:opacity-30"
               type="submit"
               color="primary"
               isLoading={loading}
               isDisabled={!isValid}
             >
-              Check In
+              Check-in!
             </Button>
           </form>
         ) : (
           <div className="w-full flex flex-col gap-6 text-center">
-            <div>
-              <h1 className="text-4xl  italic font-bold tex">
-                Arise New Year Party 2023
+            <div className="flex flex-col justify-center items-center">
+              <h1 className="text-4xl  italic font-bold tracking-widest">
+                Welcome to <br />
+                Staff Engagement Party
               </h1>
-              <h4 className="mt-6 text-lg">
-                Kindly sign in using your credentials only from @arise.tech,
-                @infinitaskt.com, and @krungthai.com.
+              <h4 className="mt-6 text-2xl  text-yellow-500">
+                Register to get a chance to win the Lucky Draw game!
               </h4>
             </div>
-            <Divider className="my-4" />
-            <div className="flex w-full justify-center">
+            {/* <Divider className="my-4" /> */}
+            <div className="flex w-full justify-center mt-6">
               <GoogleLogin
                 logo_alignment="center"
                 width={250}
