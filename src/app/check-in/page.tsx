@@ -23,7 +23,7 @@ export default function CheckInPage({}: Props) {
   }, []);
 
   return (
-    <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-3 px-6">
+    <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-12 px-6">
       <div className="flex justify-center">
         <Image src={ariseSoul} alt="" width={400} height={200}></Image>
       </div>
@@ -40,7 +40,7 @@ export default function CheckInPage({}: Props) {
           are RESERVED <br />
           FOR ONSITE PARTICIPANTS only.
         </h4>
-        <p className="text-2xl">Stay tuned. The winners can be you.</p>
+        <p className="text-2xl text-center">Stay tuned. The winners can be you.</p>
       </div>
     </div>
   );

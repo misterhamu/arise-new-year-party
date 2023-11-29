@@ -168,7 +168,7 @@ export default function Home() {
   
   return (
     <>
-      <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-3 px-6">
+      <div className="flex flex-col justify-start flex-wrap content-start gap-6 mt-12 px-6">
         <div className="flex justify-center">
           <Image
             src={"/images/game.png"}
@@ -182,9 +182,6 @@ export default function Home() {
             onSubmit={handleSubmit(onSubmit)}
             className="w-full flex flex-col gap-6 text-center"
           >
-            <h1 className="text-4xl mb-6 italic font-bold">
-              Arise New Year Party 2023
-            </h1>
             <Input
               type="email"
               label="Email"
