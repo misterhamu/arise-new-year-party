@@ -11,7 +11,7 @@ export type GetEmployeeByEmailResponse = {
 
 export interface Employee {
   employeeId: string;
-  szie: string;
+  size: string;
 }
 
 export const getEmployeeId = async (req: GetEmployeeByEmailRequest) => {
