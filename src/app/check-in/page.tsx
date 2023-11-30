@@ -8,6 +8,7 @@ type Props = {};
 
 export default function CheckInPage({}: Props) {
   const router = useRouter();
+  const [size, setSize] = useState<string>("");
   const { theme, setTheme } = useTheme();
   const [ariseSoul, setAriseSoul] = useState("/images/dark.png");
   useEffect(() => {
@@ -17,6 +18,10 @@ export default function CheckInPage({}: Props) {
   }, [theme]);
 
   useEffect(() => {
+    if (sessionStorage.getItem("size")) {
+      setSize(sessionStorage.getItem("size") ?? "");
+    }
+
     if (!sessionStorage.getItem("checkIn")) {
       router.replace("/");
     }
@@ -31,6 +36,9 @@ export default function CheckInPage({}: Props) {
         <h1 className="text-2xl  italic font-bold tracking-widest text-center">
           You are registered!
         </h1>
+        <p className="text-2xl text-yellow-500 font-bold text-center ">
+          T-shirt size: <span className="text-4xl">{size}</span>
+        </p>
         <p className="text-xl  text-center">
           Please wear the given t-shirt and wristband to join the event and for
           your safety.
@@ -40,7 +48,9 @@ export default function CheckInPage({}: Props) {
           are RESERVED <br />
           FOR ONSITE PARTICIPANTS only.
         </h4>
-        <p className="text-xl text-center">Stay tuned. The winners can be you.</p>
+        <p className="text-xl text-center">
+          Stay tuned. The winners can be you.
+        </p>
         <p className="text-xl text-center">Cheers!</p>
       </div>
     </div>
