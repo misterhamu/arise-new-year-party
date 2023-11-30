@@ -41,6 +41,7 @@ export default function CheckInPage({}: Props) {
           FOR ONSITE PARTICIPANTS only.
         </h4>
         <p className="text-xl text-center">Stay tuned. The winners can be you.</p>
+        <p className="text-xl text-center">Cheers!</p>
       </div>
     </div>
   );
