@@ -93,7 +93,7 @@ export default function Home() {
       if (data?.data) {
         console.log(data);
         setValue("employeeId", data.data.data.employeeId);
-        setSize(data.data.data.szie  ?? "-" )
+        setSize(data.data.data.size  ?? "-" )
         trigger("employeeId");
         setEmployee(true);
       }
