@@ -37,6 +37,7 @@ export default function Home() {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<JWTGoogleResponse | null>();
   const [emailDomain, setEmailDomain] = useState<string>("");
+  const [size, setSize] = useState<string>("");
   const [employee, setEmployee] = useState<boolean>(false);
   const employeeIdRef = useRef<HTMLInputElement | null>(null);
   const [loading, setLoading] = useState(false);
@@ -92,6 +93,7 @@ export default function Home() {
       if (data?.data) {
         console.log(data);
         setValue("employeeId", data.data.data.employeeId);
+        setSize(data.data.data.szie  ?? "-" )
         trigger("employeeId");
         setEmployee(true);
       }
@@ -232,7 +234,7 @@ export default function Home() {
                 label="Size"
                 placeholder=""
                 className="text-4xl size"
-                value={"M"}
+                value={size}
               />
             </div>
 

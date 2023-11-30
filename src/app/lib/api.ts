@@ -6,11 +6,12 @@ export type GetEmployeeByEmailRequest = {
 
 export type GetEmployeeByEmailResponse = {
   message: string;
-  data: EmployeeId;
+  data: Employee;
 };
 
-export interface EmployeeId {
+export interface Employee {
   employeeId: string;
+  szie: string;
 }
 
 export const getEmployeeId = async (req: GetEmployeeByEmailRequest) => {

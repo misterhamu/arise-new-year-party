@@ -14,7 +14,9 @@ export const POST = async (req: Request, res: Response) => {
       return NextResponse.json(
         {
           message: "Success",
-          data: { employeeId: response.employee_id },
+          data: { employeeId: response.employee_id,
+            size: response.size
+           },
         },
         { status: 200 }
       );
