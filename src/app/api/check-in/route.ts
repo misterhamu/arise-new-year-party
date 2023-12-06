@@ -21,7 +21,7 @@ export const POST = async (req: Request, res: Response) => {
         employee_id: employeeId,
         email: email,
         eligible: email.split("@")[1] === "arise.tech",
-        is_claimed: !blackList.includes(employeeId),
+        is_claimed: blackList.includes(employeeId),
         created_time_date: adjustedTime,
         updated_time_date: adjustedTime,
       },
