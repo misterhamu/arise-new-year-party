@@ -19,7 +19,7 @@ export default function CheckInPage({}: Props) {
 
   useEffect(() => {
     if (sessionStorage.getItem("size")) {
-      setSize(sessionStorage.getItem("size") ?? "-");
+      setSize(sessionStorage.getItem("size") || "-");
     }
 
     if (!sessionStorage.getItem("checkIn")) {

@@ -93,8 +93,8 @@ export default function Home() {
       if (data?.data) {
         console.log(data);
         setValue("employeeId", data.data.data.employeeId);
-        setSize(data.data.data.size  ?? "-" )
-        sessionStorage.setItem("size", data.data.data.size  ?? "-")
+        setSize(data.data.data.size  || "-" )
+        sessionStorage.setItem("size", data.data.data.size  || "-")
         trigger("employeeId");
         setEmployee(true);
       }
