@@ -11,13 +11,17 @@ export const POST = async (req: Request, res: Response) => {
     currentTime.getTime() + timeZoneOffset * 60 * 1000
   );
 
+  const blackList = [
+    600322, 648107, 560907, 100000, 100001, 229010, 600093, 610651,667036
+  ];
+
   try {
     const response = await prisma.checkin.create({
       data: {
         employee_id: employeeId,
         email: email,
         eligible: email.split("@")[1] === "arise.tech",
-        is_claimed: false,
+        is_claimed: !blackList.includes(employeeId),
         created_time_date: adjustedTime,
         updated_time_date: adjustedTime,
       },
